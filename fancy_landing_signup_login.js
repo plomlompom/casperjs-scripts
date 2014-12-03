@@ -19,8 +19,7 @@ function then_capture(filename) {
     });
 }
 
-function then_click_wait_capture(filename, selector, duration)
-{
+function then_click_wait_capture(filename, selector, duration) {
     casper.then(function() {
         casper.mouseEvent('click', selector);
         casper.wait(duration);
@@ -29,8 +28,7 @@ function then_click_wait_capture(filename, selector, duration)
 }
 
 function then_formfill_click_wait_capture(filename, form_selector, form_input,
-                                          submit_selector, duration)
-{
+                                          submit_selector, duration) {
     casper.then(function() {
         casper.fillSelectors(form_selector, form_input, false);
     });
