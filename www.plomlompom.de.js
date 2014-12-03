@@ -1,5 +1,6 @@
-/* Casper.js script: Make above-fold screenshots of all pages linked to from <http://www.plomlompom.de> with a
- * URL that contains the string "www.plomlompom.de".
+/* CasperJS script: Make above-fold screenshots of all pages linked to from
+ * <http://www.plomlompom.de> with a URL that contains the string
+ * "www.plomlompom.de".
  */
 var casper = require('casper').create();
 var clipRect = {
@@ -12,7 +13,9 @@ casper.start('http://www.plomlompom.de');
 casper.viewport(800, 600);
 casper.then(function() {
     var urls = this.evaluate(function() {
-        return __utils__.getElementsByXPath('.//a[contains(@href, "www.plomlompom.de")]').map(function(e) {
+        return __utils__.getElementsByXPath(
+            './/a[contains(@href, "www.plomlompom.de")]'
+        ).map(function(e) {
             return url = e.getAttribute('href');    
         });
     });
