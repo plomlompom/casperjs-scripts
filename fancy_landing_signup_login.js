@@ -3,7 +3,6 @@
 // clicking some buttons and filling out some forms. Will also build a gallery
 // index.html of pseudo-thumbnails. Won't work with the default values.
 var start_url = 'http://fancywebsite.example.com';
-var path_landing_pic = 'https://example.com/hugepicture.jpg';
 var mail_with_account = 'mail_with_account@example.com';
 var mail_sans_account = 'mail_sans_account@example.com';
 var example_domain = 'example.com'
@@ -74,10 +73,16 @@ return_url = {
 
 // Define, and start, CasperJS run.
 var casper = require('casper').create();
-casper.start(start_url);                              // Assume the landing page
-casper.waitForResource(path_landing_pic, function() { // loads a huge picture
-    then_capture('landing');                          // that we want to see
-});                                                   // fully before capturing.
+casper.start(start_url);
+casper.then(function() { // Assume landing page loads huge picture to wait for.
+    var path_landing_pic = casper.evaluate(function() {
+        var element = document.getElementById('keyvisual');
+        return window.getComputedStyle(element).backgroundImage.slice(5, -2);
+    });
+    casper.waitForResource(path_landing_pic, function() {
+        then_capture('landing');
+    });
+});
 then_click_wait_capture('login', 'a[href="/login"]');
 return_url.then_store();
 then_click_wait_capture('login_fail', 'div[class="active"] button');
@@ -118,4 +123,3 @@ casper.run(function() {
                         'w');
     casper.exit();
 });
-
