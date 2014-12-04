@@ -1,7 +1,7 @@
 // CasperJS script template for taking screenshots of a fancier website's
 // landing page, login, and signup screens, and various views that appear when
-// clicking some buttons and filling out some forms. Won't work with the default
-// values.
+// clicking some buttons and filling out some forms. Will also build a gallery
+// index.html of pseudo-thumbnails. Won't work with the default values.
 var start_url = 'http://fancywebsite.example.com';
 var path_landing_pic = 'https://example.com/hugepicture.jpg';
 var mail_with_account = 'mail_with_account@example.com';
@@ -12,12 +12,23 @@ var screen_width = 1024;
 var screen_height = 800;
 var dir_pix = 'pix';
 
-// Capture screenshot of current page to filename.
-function then_capture(filename) {
+var gallery_code = '<html><ul>\n';
+
+// Capture screenshot of current page to name, add thumbnail link to gallery.
+function then_capture(name) {
     casper.then(function() {
-        var path = dir_pix + '/' + filename + '.jpg';
+        var filename = name + '.jpg';
+        var path = dir_pix + '/' + filename;
         casper.echo('capturing: ' + path);
         casper.capture(path);
+        var document_height = casper.evaluate(function() {
+            return __utils__.getDocumentHeight();
+        });
+        gallery_code = gallery_code + '<li><a href="' + filename + '">' + name
+                       + '<br /><img style="width: ' + screen_width / 4
+                       + 'px; height: ' + document_height / 4
+                       + 'px; border: 1px solid black;" src="' + filename
+                       + '" /></a></li>\n';
     });
 }
 
@@ -65,38 +76,46 @@ return_url = {
 var casper = require('casper').create();
 casper.start(start_url);                              // Assume the landing page
 casper.waitForResource(path_landing_pic, function() { // loads a huge picture
-    then_capture('0_landing');                        // that we want to see
+    then_capture('landing');                          // that we want to see
 });                                                   // fully before capturing.
-then_click_wait_capture('1_login', 'a[href="/login"]');
+then_click_wait_capture('login', 'a[href="/login"]');
 return_url.then_store();
-then_click_wait_capture('2_login_fail', 'div[class="active"] button');
-then_click_wait_capture('3_password_reset', 'a[href="/password-reset"]');
-then_click_wait_capture('4_password_reset_nomail', 'div[class="active"] button')
-then_formfill_click_wait_capture('5_password_reset_wrong_mail',
+then_click_wait_capture('login_fail', 'div[class="active"] button');
+then_click_wait_capture('password_reset', 'a[href="/password-reset"]');
+then_click_wait_capture('password_reset_nomail', 'div[class="active"] button')
+then_formfill_click_wait_capture('password_reset_wrong_mail',
                                  { 'input':mail_sans_account },
                                  'div[class="active"] button');
-then_formfill_click_wait_capture('6_password_reset_correct_mail',
+then_formfill_click_wait_capture('password_reset_correct_mail',
                                  { 'input':mail_with_account },
                                  'div[class="active"] button');
 return_url.then_load();
-then_click_wait_capture('7_login_google', 'div[class="active"] span');
+then_click_wait_capture('login_google', 'div[class="active"] span');
 return_url.then_load();
-then_click_wait_capture('8_signup', 'a[href="/signup"]');
+then_click_wait_capture('signup', 'a[href="/signup"]');
 return_url.then_store();
-then_click_wait_capture('9_signup_terms', 'a[href="/terms.html"]');
+then_click_wait_capture('signup_terms', 'a[href="/terms.html"]');
 return_url.then_load();
-then_click_wait_capture('A_signup_privacy', 'a[href="/privacy.html"]');
+then_click_wait_capture('signup_privacy', 'a[href="/privacy.html"]');
 return_url.then_load();
-then_click_wait_capture('B_signup_fail', 'div[class="active"] button');
-then_formfill_click_wait_capture('C_signup_fail_nomail',
+then_click_wait_capture('signup_fail', 'div[class="active"] button');
+then_formfill_click_wait_capture('signup_fail_nomail',
                                  { 'input[id="user-password"]':password },
                                  'div[class="active"] button');
-then_formfill_click_wait_capture('D_signup_fail_mail',
+then_formfill_click_wait_capture('signup_fail_mail',
                                  { 'input[id="user-email"]':mail_with_account },
                                  'div[class="active"] button');
-then_formfill_click_wait_capture('E_signup_success',
+then_formfill_click_wait_capture('signup_success',
                                  { 'input[id="user-email"]':
                                       new Date().getTime()+'@'+example_domain },
-                                 'div[class="active"] button', 3000);
+                                 'div[class="active"] button',
+                                 3000);
 casper.viewport(screen_width, screen_height);
-casper.run();
+casper.run(function() {
+    casper.echo("writing gallery's index.html");
+    require('fs').write(dir_pix + '/index.html',
+                        gallery_code + '</ul></html>',
+                        'w');
+    casper.exit();
+});
+
