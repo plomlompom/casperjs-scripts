@@ -10,7 +10,7 @@ var password = 'password';
 var screen_width = 1024;
 var screen_height = 800;
 var dir_pix = 'pix';
-var caveats_code = '<p>Browser back navigation is not tested.</p>\n'
+var caveats_code = '<p>Browser back navigation is not tested.</p>\n';
 var gallery_code = '<html>\n<h1>states of ' + start_url
                    + ' in pictures</h1>\n<h2 style="color: red;">caveats</h2>\n'
                    + caveats_code + '<h2>screenshots</h2>\n<ul>\n';
