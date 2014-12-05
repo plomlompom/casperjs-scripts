@@ -10,8 +10,10 @@ var password = 'password';
 var screen_width = 1024;
 var screen_height = 800;
 var dir_pix = 'pix';
-
-var gallery_code = '<html><ul>\n';
+var caveats_code = '<p>Browser back navigation is not tested.</p>\n'
+var gallery_code = '<html>\n<h1>states of ' + start_url
+                   + ' in pictures</h1>\n<h2>caveats</h2>\n' + caveats_code
+                   + '<h2>screenshots</h2>\n<ul>\n';
 
 // Capture screenshot of current page to name, add thumbnail link to gallery.
 function then_capture(name) {
@@ -119,7 +121,7 @@ casper.viewport(screen_width, screen_height);
 casper.run(function() {
     casper.echo("writing gallery's index.html");
     require('fs').write(dir_pix + '/index.html',
-                        gallery_code + '</ul></html>',
+                        gallery_code + '</ul>\n</html>',
                         'w');
     casper.exit();
 });
